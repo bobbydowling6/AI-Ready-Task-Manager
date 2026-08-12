@@ -44,7 +44,7 @@ def login(request: Request, credentials: LoginRequest, db: Session = Depends(get
     return {"access_token": token, "token_type": "bearer"}
 
 @limiter.limit("60/minute")
-@router.get("/me", response_model=UserResponse)
+@router.get("/me", response_model=User)
 def get_current_user(request: Request, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """Get the currently authenticated user's information."""
     return current_user
