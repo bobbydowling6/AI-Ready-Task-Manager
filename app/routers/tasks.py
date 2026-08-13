@@ -27,7 +27,7 @@ def _model_dump(model):
 
 @limiter.limit("20/minute")
 @router.post(
-    "/",
+    "/tasks",
     response_model=TaskResponse,
     status_code=201,
     summary="Create a new task",
@@ -62,7 +62,7 @@ def create_task(
 
 @limiter.limit("60/minute")
 @router.get(
-    "/",
+    "/tasks",
     response_model=list[TaskResponse],
     summary="Retrieve all tasks",
 )
@@ -73,7 +73,7 @@ def read_tasks(request: Request, db: Session = Depends(get_db)):
 
 @limiter.limit("60/minute")
 @router.get(
-    "/{task_id}",
+    "/tasks/{task_id}",
     response_model=TaskResponse,
     summary="Retrieve task by ID",
 )
@@ -83,7 +83,7 @@ def read_task(request: Request, task_id: int, db: Session = Depends(get_db)):
 
 
 @router.put(
-    "/{task_id}",
+    "/tasks/{task_id}",
     response_model=TaskResponse,
 )
 def update_task(task_id: int, task_update: UpdateTask, db: Session = Depends(get_db)):
@@ -97,7 +97,7 @@ def update_task(task_id: int, task_update: UpdateTask, db: Session = Depends(get
 
 
 @router.patch(
-    "/{task_id}",
+    "/tasks/{task_id}",
     response_model=TaskResponse,
     summary="Partially update task",
 )
@@ -119,7 +119,7 @@ def patch_task(
 
 
 @router.delete(
-    "/{task_id}",
+    "/tasks/{task_id}",
     status_code=204,
 )
 def delete_task(
@@ -156,3 +156,15 @@ def get_my_tasks(
 ):
     """Retrieve tasks belonging to the authenticated user."""
     return db.query(Task).filter(Task.user_id == current_user.id).all()
+
+@router.post(
+    "/{task_id}/suggest",
+    response_model=TaskResponse,
+    summary="Accepts the task description and returns a placeholder AI response",
+)
+def suggest_task(
+    task_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """AI suggestion placeholder endpoint."""
