@@ -37,7 +37,9 @@ def register(request: Request, credentials: RegisterRequest, db: Session = Depen
 def login(request: Request, credentials: LoginRequest, db: Session = Depends(get_db)):
     """Log in and receive an access token."""
     user = db.query(User).filter(User.email == credentials.email).first()
-    if not user or not verify_password(credentials.password, user.hashed_password.value):
+    
+    # Wrap user.hashed_password with str() to satisfy Pylance type checking
+    if not user or not verify_password(credentials.password, str(user.hashed_password)):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
     token = create_access_token(data={"sub": str(user.id)})

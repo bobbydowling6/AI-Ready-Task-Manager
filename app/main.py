@@ -49,12 +49,19 @@ This API allows for creating, reading, updating, and deleting task records while
 )
 
 @app.exception_handler(RateLimitExceeded)
-async def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded):
+def custom_rate_limit_handler(request: Request, exc: Exception) -> JSONResponse:
     return JSONResponse(
         status_code=429,
-        content={"error": True, "detail": "Rate limit exceeded"}
+        content={"detail": str(exc)},
     )
 app.state.limiter = limiter
+def rate_limit_handler(request: Request, exc: Exception) -> JSONResponse:
+    return JSONResponse(
+        status_code=429,
+        content={"detail": "Rate limit exceeded. Please try again later."},
+    )
+
+app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -101,3 +108,6 @@ async def bad_request_handler(request: Request, exc: BadRequestException):
         status_code=exc.status_code,
         content={"error": True, "detail": exc.detail}
     )
+
+from app.routers import users
+app.include_router(users.router)

@@ -5,7 +5,7 @@ from datetime import datetime
 class RegisterRequest(BaseModel):
     name: str = Field(..., max_length=50)
     email: EmailStr = Field(..., max_length=100)  # FIXED: Added EmailStr validation
-    password: str = Field(..., max_length=100)
+    password: str = Field(..., max_length=72)
 
     model_config = ConfigDict(
         json_schema_extra={
