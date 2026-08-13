@@ -27,7 +27,7 @@ def _model_dump(model):
 
 @limiter.limit("20/minute")
 @router.post(
-    "/tasks",
+    "",  # Changed from "/tasks" to ""
     response_model=TaskResponse,
     status_code=201,
     summary="Create a new task",
@@ -62,7 +62,7 @@ def create_task(
 
 @limiter.limit("60/minute")
 @router.get(
-    "/tasks",
+    "",
     response_model=list[TaskResponse],
     summary="Retrieve all tasks",
 )
@@ -73,7 +73,7 @@ def read_tasks(request: Request, db: Session = Depends(get_db)):
 
 @limiter.limit("60/minute")
 @router.get(
-    "/tasks/{task_id}",
+    "/{task_id}",
     response_model=TaskResponse,
     summary="Retrieve task by ID",
 )
@@ -83,7 +83,7 @@ def read_task(request: Request, task_id: int, db: Session = Depends(get_db)):
 
 
 @router.put(
-    "/tasks/{task_id}",
+    "/{task_id}",
     response_model=TaskResponse,
 )
 def update_task(task_id: int, task_update: UpdateTask, db: Session = Depends(get_db)):
@@ -97,7 +97,7 @@ def update_task(task_id: int, task_update: UpdateTask, db: Session = Depends(get
 
 
 @router.patch(
-    "/tasks/{task_id}",
+    "/{task_id}",
     response_model=TaskResponse,
     summary="Partially update task",
 )
@@ -119,7 +119,7 @@ def patch_task(
 
 
 @router.delete(
-    "/tasks/{task_id}",
+    "/{task_id}",
     status_code=204,
 )
 def delete_task(
